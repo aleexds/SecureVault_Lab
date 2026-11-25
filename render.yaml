@@ -1,0 +1,31 @@
+# Blueprint de Render para SecureVault API.
+# Los valores con sync: false se capturan en el panel de Render (nunca en el repo).
+services:
+  - type: web
+    name: securevault-api
+    runtime: node
+    plan: free
+    region: oregon
+    rootDir: BE
+    buildCommand: npm ci --omit=dev && npm run db:migrate
+    startCommand: npm start
+    healthCheckPath: /health
+    # El despliegue lo dispara GitHub Actions (Deploy Hook) solo si CI pasa.
+    autoDeploy: false
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: TRUST_PROXY
+        value: "1"
+      - key: DATABASE_URL
+        sync: false
+      - key: MIGRATION_DATABASE_URL
+        sync: false
+      - key: DB_SSL_CA
+        sync: false
+      - key: DATA_ENCRYPTION_KEY
+        sync: false
+      - key: SESSION_SECRET
+        sync: false
+      - key: CORS_ORIGIN
+        sync: false
