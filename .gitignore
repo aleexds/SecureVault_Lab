@@ -1,0 +1,14 @@
+node_modules/
+coverage/
+logs/
+*.log
+dist/
+build/
+
+# Secretos: nunca versionar archivos .env
+.env
+.env.*
+!.env.example
+
+.DS_Store
+Thumbs.db

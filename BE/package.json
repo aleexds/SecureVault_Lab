@@ -1,0 +1,48 @@
+{
+  "name": "be",
+  "version": "1.0.0",
+  "description": "SecureVault API - gestión segura de datos sensibles (AES-256-GCM + Argon2id)",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "nodemon src/server.js",
+    "lint": "eslint .",
+    "test": "cross-env NODE_ENV=test node --test --test-concurrency=1 \"tests/**/*.test.js\"",
+    "db:create": "node scripts/create-databases.js",
+    "db:migrate": "cross-env DB_ROLE=admin sequelize-cli db:migrate",
+    "db:migrate:undo": "cross-env DB_ROLE=admin sequelize-cli db:migrate:undo",
+    "db:app-user": "node scripts/create-app-user.js",
+    "gen:secrets": "node scripts/gen-secrets.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "argon2": "^0.45.2",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.6",
+    "cross-env": "^10.1.0",
+    "dotenv": "^18.0.10",
+    "express": "^5.3.0",
+    "express-rate-limit": "^8.7.5",
+    "helmet": "^8.3.0",
+    "jsonwebtoken": "^9.0.3",
+    "mysql2": "^3.24.6",
+    "pino": "^10.4.0",
+    "pino-http": "^11.0.0",
+    "sequelize": "^6.37.8",
+    "sequelize-cli": "^6.6.5"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.15.0",
+    "globals": "^17.14.0",
+    "nodemon": "^3.1.14",
+    "pino-pretty": "^13.2.0",
+    "supertest": "^7.3.2"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}
