@@ -48,13 +48,17 @@ function createApp() {
     })
   );
 
-  // CORS restrictivo: solo los orígenes explícitos de CORS_ORIGIN.
+  // CORS restrictivo: permite orígenes configurados en CORS_ORIGIN
   app.use(
     cors({
-      origin: (origin, cb) => cb(null, !origin || env.corsOrigins.includes(origin)),
+      origin: (origin, cb) => {
+        if (!origin) return cb(null, true);
+        const normalized = origin.replace(/\/+$/, '');
+        return cb(null, env.corsOrigins.includes(normalized));
+      },
       credentials: true,
-      methods: ['GET', 'POST', 'PATCH', 'DELETE'],
-      allowedHeaders: ['Content-Type'],
+      methods: ['GET', 'POST', 'PATCH', 'DELETE', 'OPTIONS'],
+      allowedHeaders: ['Content-Type', 'Authorization'],
       maxAge: 600,
     })
   );
