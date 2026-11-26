@@ -10,12 +10,15 @@ const config = require(path.join(__dirname, '..', 'config', 'config.js'))[env];
 const db = {};
 
 let sequelize;
-if (config.use_env_variable) {
-  const url = process.env[config.use_env_variable];
-  if (!url) throw new Error(`Falta la variable de entorno ${config.use_env_variable}`);
+const envUrlVar = config.use_env_variable;
+const url = envUrlVar ? process.env[envUrlVar] : null;
+
+if (url) {
   sequelize = new Sequelize(url, config);
-} else {
+} else if (config.database && config.username) {
   sequelize = new Sequelize(config.database, config.username, config.password, config);
+} else {
+  throw new Error('No se encontró configuración de conexión a la base de datos (DATABASE_URL o variables DB_*)');
 }
 
 fs.readdirSync(__dirname)

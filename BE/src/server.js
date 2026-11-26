@@ -22,8 +22,8 @@ async function start() {
   logger.info('Conexión a MySQL establecida');
 
   const app = createApp();
-  const server = app.listen(env.port, () => {
-    logger.info({ port: env.port, env: env.nodeEnv }, 'SecureVault API escuchando');
+  const server = app.listen(env.port, env.host, () => {
+    logger.info({ port: env.port, host: env.host, env: env.nodeEnv }, 'SecureVault API escuchando');
   });
 
   const shutdown = (signal) => {

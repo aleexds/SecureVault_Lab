@@ -37,17 +37,27 @@ function load() {
   }
 
   if (isProd) {
-    required('DATABASE_URL');
+    const hasDbUrl = Boolean(process.env.DATABASE_URL || process.env.MYSQL_URL);
+    const hasDbIndividual = Boolean(
+      (process.env.DB_HOST || process.env.MYSQLHOST) &&
+      (process.env.DB_NAME || process.env.MYSQLDATABASE) &&
+      (process.env.DB_USER || process.env.MYSQLUSER)
+    );
+    if (!hasDbUrl && !hasDbIndividual) {
+      throw new Error('En producción se requiere DATABASE_URL o las variables DB_HOST, DB_NAME, DB_USER y DB_PASSWORD.');
+    }
     required('CORS_ORIGIN');
   }
 
-  const corsOrigins = (process.env.CORS_ORIGIN || 'http://localhost:5173,http://localhost:3000')
+  const defaultCors = isProd ? '' : 'http://localhost:5173,http://localhost:3000';
+  const rawCors = process.env.CORS_ORIGIN || defaultCors;
+  const corsOrigins = rawCors
     .split(',')
-    .map((o) => o.trim())
+    .map((o) => o.trim().replace(/\/+$/, ''))
     .filter(Boolean);
 
-  if (isProd && corsOrigins.some((o) => o === '*' || !o.startsWith('https://'))) {
-    throw new Error('En producción CORS_ORIGIN solo admite orígenes https:// explícitos (sin comodines).');
+  if (isProd && corsOrigins.some((o) => o === '*' || (!o.startsWith('https://') && !o.startsWith('http://')))) {
+    throw new Error('En producción CORS_ORIGIN solo admite orígenes URL explícitos (ej. https://tu-frontend.up.railway.app).');
   }
 
   return {
@@ -55,6 +65,7 @@ function load() {
     isProd,
     isTest: NODE_ENV === 'test',
     port: Number(process.env.PORT) || 3000,
+    host: process.env.HOST || '0.0.0.0',
     trustProxy: parseTrustProxy(process.env.TRUST_PROXY),
     corsOrigins,
     dataEncryptionKey,
