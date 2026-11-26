@@ -2,7 +2,12 @@
 // Soporta peticiones relativas (/api, /health) a través del proxy de Vite
 // y peticiones con credenciales (cookies HttpOnly sv_session).
 
-const API_BASE = '';
+// Base URL del backend: usa VITE_BACKEND_URL (sin barra final) cuando esté definida,
+// sin depender de que import.meta.env.PROD sea true. Si no está definida, respalda en ''.
+const rawBackendUrl = import.meta.env.VITE_BACKEND_URL;
+const API_BASE = (typeof rawBackendUrl === 'string' && rawBackendUrl.trim())
+  ? rawBackendUrl.trim().replace(/\/+$/, '')
+  : '';
 
 async function request(endpoint, options = {}) {
   const config = {
